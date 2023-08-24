@@ -1,0 +1,28 @@
+{
+  "name": "books-app",
+  "version": "1.0.0",
+  "description": "Cool book app",
+  "main": "app.js",
+  "scripts": {
+    "start": "live-server",
+    "build": "rollup",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erazinkov/books-app.git"
+  },
+  "keywords": [
+    "books"
+  ],
+  "author": "Egor Razinkov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/erazinkov/books-app/issues"
+  },
+  "homepage": "https://github.com/erazinkov/books-app#readme",
+  "devDependencies": {
+    "eslint": "^8.47.0",
+    "rollup": "^3.28.1"
+  }
+}
