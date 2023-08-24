@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "Cool book app",
   "main": "app.js",
+  "type": "module",
   "scripts": {
     "start": "live-server",
-    "build": "rollup",
+    "build": "rollup -c --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,7 +23,9 @@
   },
   "homepage": "https://github.com/erazinkov/books-app#readme",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.1",
     "eslint": "^8.47.0",
-    "rollup": "^3.28.1"
+    "rollup": "^3.28.1",
+    "rollup-plugin-import-css": "^3.3.1"
   }
 }
