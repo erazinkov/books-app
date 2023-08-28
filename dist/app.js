@@ -1030,7 +1030,6 @@
         }
 
         render() {
-            this.el.innerHTML = '';
             this.el.classList.add('header');
             this.el.innerHTML = `
             <div>
@@ -1054,6 +1053,72 @@
         }
     }
 
+    class Search extends DivComponent {
+        constructor(state) {
+            super();
+            this.state = state;
+        }
+
+        search() {
+            const value = this.el.querySelector('input').value;
+            this.state.searchQuery = value;
+        }
+
+        render() {
+            this.el.classList.add('search');
+            this.el.innerHTML = `
+            <div class="search__wrapper">
+                <input 
+                    type="text" 
+                    placeholder="Find book"
+                    class="search__input"
+                    value="${this.state.searchQuery ? this.state.searchQuery : ""}"
+                />
+                <img src="/static/search.svg" alt="Search icon" />
+            </div>
+            <button aria-label="Search">
+                <img src="/static/search-white.svg" alt="Search icon" />
+            </button>
+        `;
+            this.el.querySelector('button').addEventListener('click', this.search.bind(this));
+            this.el.querySelector('input').addEventListener('keydown', (event) => {
+                if (event.code === 'Enter') {
+                    this.search();
+                }
+            });
+            return this.el;
+        }
+    }
+
+    class CardList extends DivComponent {
+        constructor(state) {
+            super();
+            this.state = state;
+            console.log(this.state.list.length);
+        }
+        render() {
+            this.el.classList.add('cardlist');
+            if (this.state.loading) {
+                this.el.innerHTML = `
+                <div>
+                    <div>
+                        Processing...
+                    </div>
+                </div>
+            `;
+                return this.el;
+            }
+            this.el.innerHTML = `
+            <div>
+                <div>
+                    Found - ${this.state.list.length}
+                </div>
+            </div>
+        `;
+            return this.el;
+        }
+    }
+
     class MainView extends AbstractView {
 
         state = {
@@ -1067,15 +1132,34 @@
             super();
             this.appState = appState;
             this.appState = onChange(this.appState, this.appStateHook.bind(this));
+            this.state = onChange(this.state, this.stateHook.bind(this));
             this.setTitle('Book search');
         }
 
         appStateHook(path) {
-            console.log(path);
+            if (path === 'favorites') {
+                console.log(path);
+            }
+        }
+        
+        async stateHook(path) {
+            if (path === 'searchQuery') {
+                this.state.loading = true;
+                const data = await this.loadList(this.state.searchQuery, this.state.offset);
+                this.state.loading = false;
+                this.state.list = data;
+                console.log(data);
+            }
+        }
+        async loadList(q, offset) {
+            const res = await fetch(`https://openlibrary.org/search.json?q=${q}&offset=${offset}`);
+            return res.json();
         }
 
         render() {
             const main = document.createElement('div');
+            main.append(new Search(this.state).render());
+            main.append(new CardList(this.state).render());
             this.app.innerHTML = '';
             this.app.append(main);
             this.renderHeader();
@@ -1085,6 +1169,7 @@
             const header = new Header(this.appState).render();
             this.app.prepend(header);
         }
+
     }
 
     class App {
