@@ -1091,29 +1091,25 @@
     }
 
     class CardList extends DivComponent {
-        constructor(state) {
+        constructor(appState, parentState) {
             super();
-            this.state = state;
-            console.log(this.state.list.length);
+            this.appState = appState;
+            this.parentState = parentState;
         }
         render() {
-            this.el.classList.add('cardlist');
-            if (this.state.loading) {
+            this.el.classList.add('card_list');
+            if (this.parentState.loading) {
                 this.el.innerHTML = `
-                <div>
-                    <div>
-                        Processing...
-                    </div>
+                <div class="card_list__loader">
+                    Processing...
                 </div>
             `;
                 return this.el;
             }
             this.el.innerHTML = `
-            <div>
-                <div>
-                    Found - ${this.state.list.length}
-                </div>
-            </div>
+            <h1>
+                Found - ${this.parentState.list.length}
+            </h1>
         `;
             return this.el;
         }
@@ -1147,8 +1143,10 @@
                 this.state.loading = true;
                 const data = await this.loadList(this.state.searchQuery, this.state.offset);
                 this.state.loading = false;
-                this.state.list = data;
-                console.log(data);
+                this.state.list = data.docs;
+            }
+            if (path === 'list' || path === 'loading') {
+                this.render();
             }
         }
         async loadList(q, offset) {
@@ -1159,7 +1157,7 @@
         render() {
             const main = document.createElement('div');
             main.append(new Search(this.state).render());
-            main.append(new CardList(this.state).render());
+            main.append(new CardList(this.appState, this.state).render());
             this.app.innerHTML = '';
             this.app.append(main);
             this.renderHeader();
