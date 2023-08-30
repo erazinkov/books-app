@@ -1090,6 +1090,19 @@
         }
     }
 
+    class Loader extends DivComponent {
+        constructor() {
+            super();
+        }
+        render() {
+            this.el.classList.add('lds-dual-ring');
+            this.el.innerHTML = `
+            <div></div>
+        `;
+            return this.el;
+        }
+    }
+
     class CardList extends DivComponent {
         constructor(appState, parentState) {
             super();
@@ -1099,17 +1112,18 @@
         render() {
             this.el.classList.add('card_list');
             if (this.parentState.loading) {
-                this.el.innerHTML = `
-                <div class="card_list__loader">
-                    Processing...
-                </div>
-            `;
+                // this.el.innerHTML = `
+                //     <div class="card_list__loader">
+                //         Processing...
+                //     </div>
+                // `;
+                this.el = new Loader().render();
                 return this.el;
             }
             this.el.innerHTML = `
-            <h1>
-                Found - ${this.parentState.list.length}
-            </h1>
+        <h1>
+        Found - ${this.parentState.list.length}
+        </h1>
         `;
             return this.el;
         }
