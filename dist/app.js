@@ -1090,6 +1090,45 @@
         }
     }
 
+    class Card extends DivComponent {
+        constructor(appState, cardState) {
+            super();
+            this.appState = appState;
+            this.cardState = cardState;
+        }
+        render() {
+            this.el.classList.add('card');
+            const existInFavorites = this.appState.favorites.find(
+                b => b.key === this.cardState.key
+            );
+            this.el.innerHTML = `
+        <div class="card__image">
+            <img src="https://covers.openlibrary.org/b/olid/${this.cardState.cover_edition_key}-M.jpg" alt="Cover image">
+        </div>
+        <div class="card__info">
+            <div class="card__tag">
+                ${this.cardState.subject ? this.cardState.subject[0] : "Unknown"}
+            </div>
+            <div class="card__name">
+                ${this.cardState.title}
+            </div>
+            <div class="card__author">
+                ${this.cardState.author_name ? this.cardState.author_name[0] : "Unknown"}
+            </div>
+            <div class="card__footer">
+                <button class="button__add" ${existInFavorites ? "button__active" : ""}>
+                    ${existInFavorites
+                        ? `<img src="/static/favorites.svg" alt="Favorites"></img>`
+                        : `<img src="/static/favorites-white.svg" alt="Favorites"></img>`
+                    }
+                </button>
+            </div>
+        </div>
+        `;
+            return this.el;
+        }
+    }
+
     class Loader extends DivComponent {
         constructor() {
             super();
@@ -1122,9 +1161,12 @@
             }
             this.el.innerHTML = `
         <h1>
-        Found - ${this.parentState.list.length}
+            Found - ${this.parentState.numFound}
         </h1>
         `;
+            for (const card of this.parentState.list) {
+                this.el.append(new Card(this.appState, card).render());
+            }
             return this.el;
         }
     }
@@ -1133,6 +1175,7 @@
 
         state = {
             list: [],
+            numFound: 0,
             loading: false,
             searchQuery: undefined,
             offset: 0
@@ -1157,6 +1200,8 @@
                 this.state.loading = true;
                 const data = await this.loadList(this.state.searchQuery, this.state.offset);
                 this.state.loading = false;
+                this.state.numFound = data.numFound;
+                console.log(data);
                 this.state.list = data.docs;
             }
             if (path === 'list' || path === 'loading') {
