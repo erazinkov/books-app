@@ -17,7 +17,7 @@ export class CardList extends DivComponent {
             //         Processing...
             //     </div>
             // `;
-            this.el = new Loader().render();
+            this.el.append(new Loader().render());
             return this.el;
         }
         this.el.innerHTML = `

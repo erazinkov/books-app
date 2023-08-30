@@ -149,6 +149,7 @@
 
 .button__active {
     background: var(--white);
+    color: var(--black);
 }
 .lds-dual-ring {
     display: inline-block;

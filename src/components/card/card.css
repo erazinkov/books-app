@@ -70,4 +70,5 @@
 
 .button__active {
     background: var(--white);
+    color: var(--black);
 }

@@ -1096,6 +1096,14 @@
             this.appState = appState;
             this.cardState = cardState;
         }
+        #deleteFromFavorites() {
+            this.appState.favorites = this.appState.favorites.filter(
+                b => b.key !== this.cardState.key
+            );
+        }
+        #addToFavorites() {
+            this.appState.favorites.push(this.cardState);
+        }
         render() {
             this.el.classList.add('card');
             const existInFavorites = this.appState.favorites.find(
@@ -1116,7 +1124,7 @@
                 ${this.cardState.author_name ? this.cardState.author_name[0] : "Unknown"}
             </div>
             <div class="card__footer">
-                <button class="button__add" ${existInFavorites ? "button__active" : ""}>
+                <button class="button__add ${existInFavorites ? "button__active" : ""}">
                     ${existInFavorites
                         ? `<img src="/static/favorites.svg" alt="Favorites"></img>`
                         : `<img src="/static/favorites-white.svg" alt="Favorites"></img>`
@@ -1125,6 +1133,16 @@
             </div>
         </div>
         `;
+            if (existInFavorites) {
+                this.el
+                    .querySelector('button')
+                    .addEventListener('click', this.#deleteFromFavorites.bind(this));
+            } else {
+                this.el
+                    .querySelector('button')
+                    .addEventListener('click', this.#addToFavorites.bind(this));
+            }
+            
             return this.el;
         }
     }
@@ -1156,7 +1174,7 @@
                 //         Processing...
                 //     </div>
                 // `;
-                this.el = new Loader().render();
+                this.el.append(new Loader().render());
                 return this.el;
             }
             this.el.innerHTML = `
@@ -1191,7 +1209,7 @@
 
         appStateHook(path) {
             if (path === 'favorites') {
-                console.log(path);
+                this.render();
             }
         }
         
@@ -1201,7 +1219,6 @@
                 const data = await this.loadList(this.state.searchQuery, this.state.offset);
                 this.state.loading = false;
                 this.state.numFound = data.numFound;
-                console.log(data);
                 this.state.list = data.docs;
             }
             if (path === 'list' || path === 'loading') {
