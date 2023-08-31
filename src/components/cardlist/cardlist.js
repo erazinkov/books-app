@@ -10,7 +10,6 @@ export class CardList extends DivComponent {
         this.parentState = parentState;
     }
     render() {
-        this.el.classList.add('card_list');
         if (this.parentState.loading) {
             // this.el.innerHTML = `
             //     <div class="card_list__loader">
@@ -25,9 +24,13 @@ export class CardList extends DivComponent {
             Found - ${this.parentState.numFound}
         </h1>
         `;
+        const cardGrid = document.createElement('div');
+        cardGrid.classList.add('card_grid');
         for (const card of this.parentState.list) {
-            this.el.append(new Card(this.appState, card).render());
+            cardGrid.append(new Card(this.appState, card).render());
         }
+        this.el.append(cardGrid);
+
         return this.el;
     }
 }

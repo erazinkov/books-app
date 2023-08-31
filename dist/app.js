@@ -1167,7 +1167,6 @@
             this.parentState = parentState;
         }
         render() {
-            this.el.classList.add('card_list');
             if (this.parentState.loading) {
                 // this.el.innerHTML = `
                 //     <div class="card_list__loader">
@@ -1182,9 +1181,13 @@
             Found - ${this.parentState.numFound}
         </h1>
         `;
+            const cardGrid = document.createElement('div');
+            cardGrid.classList.add('card_grid');
             for (const card of this.parentState.list) {
-                this.el.append(new Card(this.appState, card).render());
+                cardGrid.append(new Card(this.appState, card).render());
             }
+            this.el.append(cardGrid);
+
             return this.el;
         }
     }
@@ -1205,6 +1208,11 @@
             this.appState = onChange(this.appState, this.appStateHook.bind(this));
             this.state = onChange(this.state, this.stateHook.bind(this));
             this.setTitle('Book search');
+        }
+
+        destroy() {
+            onChange.unsubscribe(this.appState);
+            onChange.unsubscribe(this.state);
         }
 
         appStateHook(path) {

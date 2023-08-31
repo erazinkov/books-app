@@ -181,3 +181,9 @@
     font-size: 1rem;
     padding: 2rem;
 }
+
+.card_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
