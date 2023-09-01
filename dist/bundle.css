@@ -187,3 +187,19 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 30px;
 }
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.main:last-child {
+    justify-self: flex-end;
+}

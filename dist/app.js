@@ -1040,7 +1040,7 @@
                     <img src="/static/search.svg" alt="Search" />
                     Book search
                 </a>
-                <a class="menu__item" href="#">
+                <a class="menu__item" href="#favorites">
                     <img src="/static/favorites.svg" alt="Favorites" />
                     Favorites
                     <div class="menu__counter">
@@ -1166,6 +1166,7 @@
             this.appState = appState;
             this.parentState = parentState;
         }
+
         render() {
             if (this.parentState.loading) {
                 // this.el.innerHTML = `
@@ -1176,18 +1177,48 @@
                 this.el.append(new Loader().render());
                 return this.el;
             }
-            this.el.innerHTML = `
-        <h1>
-            Found - ${this.parentState.numFound}
-        </h1>
-        `;
             const cardGrid = document.createElement('div');
             cardGrid.classList.add('card_grid');
+            let currentCardNumber = 0;
+            let maxCardNumber = 6;
             for (const card of this.parentState.list) {
+                if (++currentCardNumber > maxCardNumber) break;
                 cardGrid.append(new Card(this.appState, card).render());
             }
             this.el.append(cardGrid);
+            return this.el;
+        }
+    }
 
+    class Footer extends DivComponent {
+        constructor(appState) {
+            super();
+            this.appState = appState;
+        }
+
+        #prev() {
+            const currentOffset = this.appState.offset;
+            console.log(currentOffset);
+            this.appState.offset -= 6;
+        }
+
+        #next() {
+            const currentOffset = this.appState.offset;
+            console.log(currentOffset);
+            // const numFound = this.appState.numFound;
+            this.appState.offset += 6;
+        }
+
+        render() {
+            this.el.classList.add('footer');
+            this.el.innerHTML = `
+            <button class="prev">Prev</button>
+            <button class="next">Next</button>
+        `;
+            this.el.querySelector('button.prev')
+                    .addEventListener('click', this.#prev.bind(this));
+            this.el.querySelector('button.next')
+                    .addEventListener('click', this.#next.bind(this));
             return this.el;
         }
     }
@@ -1199,7 +1230,8 @@
             numFound: 0,
             loading: false,
             searchQuery: undefined,
-            offset: 0
+            offset: 0,
+            test: 123
         }
 
         constructor(appState) {
@@ -1222,7 +1254,7 @@
         }
         
         async stateHook(path) {
-            if (path === 'searchQuery') {
+            if (path === 'searchQuery' || path === 'offset') {
                 this.state.loading = true;
                 const data = await this.loadList(this.state.searchQuery, this.state.offset);
                 this.state.loading = false;
@@ -1238,10 +1270,68 @@
             return res.json();
         }
 
+        next() {
+            this.state.offset++;
+            console.log(this.state.offset);
+        }
+
         render() {
             const main = document.createElement('div');
+            main.innerHTML = `
+        <h2>
+            Found - ${this.state.numFound}
+        </h2>
+        `;
             main.append(new Search(this.state).render());
             main.append(new CardList(this.appState, this.state).render());
+            this.app.innerHTML = '';
+            this.app.append(main);
+            this.renderHeader();
+            this.renderFooter();
+            
+        }
+
+        renderHeader() {
+            const header = new Header(this.appState).render();
+            this.app.prepend(header);
+        }
+
+        renderFooter() {
+            if (this.state.numFound > 6) { 
+                const footer = new Footer(this.state).render();
+                this.app.append(footer);
+            }
+        }
+
+    }
+
+    class FavoritesView extends AbstractView {
+
+        constructor(appState) {
+            super();
+            this.appState = appState;
+            this.appState = onChange(this.appState, this.appStateHook.bind(this));
+            this.setTitle('Favorites');
+        }
+
+        destroy() {
+            onChange.unsubscribe(this.appState);
+        }
+
+        appStateHook(path) {
+            if (path === 'favorites') {
+                this.render();
+            }
+        }
+
+        render() {
+            const main = document.createElement('div');
+            main.innerHTML = `
+        <h1>
+            Favorites
+        </h1>
+        `;
+            main.append(new CardList(this.appState, { list: this.appState.favorites }).render());
             this.app.innerHTML = '';
             this.app.append(main);
             this.renderHeader();
@@ -1258,7 +1348,11 @@
         routes = [
             {
                 path: "",
-                view: MainView
+                view: MainView,
+            },
+            {
+                path: "#favorites",
+                view: FavoritesView,
             }
         ];
         appState = {

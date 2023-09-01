@@ -3,7 +3,8 @@ import onChange from 'on-change';
 import { Header } from "../../components/header/header.js";
 import { Search } from "../../components/search/search.js";
 import { CardList } from "../../components/cardlist/cardlist.js";
-
+import { Footer } from "../../components/footer/footer.js";
+import './main.css';
 export class MainView extends AbstractView {
 
     state = {
@@ -11,7 +12,8 @@ export class MainView extends AbstractView {
         numFound: 0,
         loading: false,
         searchQuery: undefined,
-        offset: 0
+        offset: 0,
+        test: 123
     }
 
     constructor(appState) {
@@ -34,7 +36,7 @@ export class MainView extends AbstractView {
     }
     
     async stateHook(path) {
-        if (path === 'searchQuery') {
+        if (path === 'searchQuery' || path === 'offset') {
             this.state.loading = true;
             const data = await this.loadList(this.state.searchQuery, this.state.offset);
             this.state.loading = false;
@@ -50,18 +52,37 @@ export class MainView extends AbstractView {
         return res.json();
     }
 
+    next() {
+        this.state.offset++;
+        console.log(this.state.offset);
+    }
+
     render() {
         const main = document.createElement('div');
+        main.innerHTML = `
+        <h2>
+            Found - ${this.state.numFound}
+        </h2>
+        `;
         main.append(new Search(this.state).render());
         main.append(new CardList(this.appState, this.state).render());
         this.app.innerHTML = '';
         this.app.append(main);
         this.renderHeader();
+        this.renderFooter();
+        
     }
 
     renderHeader() {
         const header = new Header(this.appState).render();
         this.app.prepend(header);
+    }
+
+    renderFooter() {
+        if (this.state.numFound > 6) { 
+            const footer = new Footer(this.state).render();
+            this.app.append(footer);
+        }
     }
 
 }
