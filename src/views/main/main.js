@@ -13,7 +13,7 @@ export class MainView extends AbstractView {
         loading: false,
         searchQuery: undefined,
         offset: 0,
-        test: 123
+        numToDisplay: 6,
     }
 
     constructor(appState) {
@@ -37,6 +37,9 @@ export class MainView extends AbstractView {
     
     async stateHook(path) {
         if (path === 'searchQuery' || path === 'offset') {
+            if (path === 'searchQuery') {
+                this.state.offset = 0;
+            }
             this.state.loading = true;
             const data = await this.loadList(this.state.searchQuery, this.state.offset);
             this.state.loading = false;
@@ -52,17 +55,12 @@ export class MainView extends AbstractView {
         return res.json();
     }
 
-    next() {
-        this.state.offset++;
-        console.log(this.state.offset);
-    }
-
     render() {
         const main = document.createElement('div');
         main.innerHTML = `
-        <h2>
+        <span>
             Found - ${this.state.numFound}
-        </h2>
+        </span>
         `;
         main.append(new Search(this.state).render());
         main.append(new CardList(this.appState, this.state).render());
@@ -79,10 +77,8 @@ export class MainView extends AbstractView {
     }
 
     renderFooter() {
-        if (this.state.numFound > 6) { 
-            const footer = new Footer(this.state).render();
-            this.app.append(footer);
-        }
+        const footer = new Footer(this.state).render();
+        this.app.append(footer);
     }
 
 }

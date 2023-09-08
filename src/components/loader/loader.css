@@ -1,9 +1,15 @@
-.lds-dual-ring {
-    display: inline-block;
+.loader {
+  display: flex;
+  justify-content: center;
+  height: 50vh;
+  align-items: center;
+}
+.loader__ring {
+    display: block;
     width: 2.375rem;
     height: 2.375rem;
-  }
-  .lds-dual-ring:after {
+}
+  .loader__ring:after {
     content: " ";
     display: block;
     width: 2rem;

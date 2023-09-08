@@ -2,7 +2,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 1.875rem;
+    margin-bottom: 1.25rem;
     margin-top: 1.25rem;
 }
 
@@ -40,7 +40,7 @@
     display: flex;
     width: 100%;
     gap: 0.625rem;
-    margin-bottom: 1.875rem;
+    margin-bottom: 1.25rem;
 }
 
 .search__wrapper {
@@ -151,12 +151,18 @@
     background: var(--white);
     color: var(--black);
 }
-.lds-dual-ring {
-    display: inline-block;
+.loader {
+  display: flex;
+  justify-content: center;
+  height: 50vh;
+  align-items: center;
+}
+.loader__ring {
+    display: block;
     width: 2.375rem;
     height: 2.375rem;
-  }
-  .lds-dual-ring:after {
+}
+  .loader__ring:after {
     content: " ";
     display: block;
     width: 2rem;
@@ -191,6 +197,31 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-bottom: 0.625rem;
+    margin-top: 0.625rem;
+}
+
+.button {
+    display: flex;
+    align-items: center;
+    line-height: 1.25rem;
+    gap: 1.05rem;
+    background-color: inherit;
+    border: none;
+    cursor: pointer;
+}
+
+.button img {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+.active {
+    visibility: visible;
+}
+
+.inactive {
+    visibility: hidden;
 }
 .main {
     display: flex;

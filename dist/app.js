@@ -1152,9 +1152,9 @@
             super();
         }
         render() {
-            this.el.classList.add('lds-dual-ring');
+            this.el.classList.add('loader');
             this.el.innerHTML = `
-            <div></div>
+            <div class="loader__ring"></div>
         `;
             return this.el;
         }
@@ -1169,18 +1169,13 @@
 
         render() {
             if (this.parentState.loading) {
-                // this.el.innerHTML = `
-                //     <div class="card_list__loader">
-                //         Processing...
-                //     </div>
-                // `;
                 this.el.append(new Loader().render());
                 return this.el;
             }
             const cardGrid = document.createElement('div');
             cardGrid.classList.add('card_grid');
             let currentCardNumber = 0;
-            let maxCardNumber = 6;
+            const maxCardNumber = this.parentState.numToDisplay;
             for (const card of this.parentState.list) {
                 if (++currentCardNumber > maxCardNumber) break;
                 cardGrid.append(new Card(this.appState, card).render());
@@ -1191,29 +1186,65 @@
     }
 
     class Footer extends DivComponent {
-        constructor(appState) {
+
+
+        constructor(parentState) {
             super();
-            this.appState = appState;
+            this.parentState = parentState;
         }
 
         #prev() {
-            const currentOffset = this.appState.offset;
-            console.log(currentOffset);
-            this.appState.offset -= 6;
+            const currentOffset = this.parentState.offset;
+            if (currentOffset) {
+                this.parentState.offset -= this.parentState.numToDisplay;
+            }
         }
 
         #next() {
-            const currentOffset = this.appState.offset;
-            console.log(currentOffset);
-            // const numFound = this.appState.numFound;
-            this.appState.offset += 6;
+            const currentOffset = this.parentState.offset;
+            const numFound = this.parentState.numFound;
+            if (numFound - currentOffset - this.parentState.numToDisplay > 0) {
+                this.parentState.offset += this.parentState.numToDisplay;
+            }
         }
+
+        #isPrevActive() {
+            const currentOffset = this.parentState.offset;
+            const isLoading = this.parentState.loading;
+            if (currentOffset && !isLoading) {
+                return true;        
+            }
+            return false;
+        }
+
+        #isNextActive() {
+            const currentOffset = this.parentState.offset;
+            const numFound = this.parentState.numFound;
+            const isLoading = this.parentState.loading;
+            if (numFound - currentOffset - this.parentState.numToDisplay > 0 && !isLoading) {
+                return true;
+            }
+            return false;
+        }
+
 
         render() {
             this.el.classList.add('footer');
+            const isPrevActive = this.#isPrevActive();
+            const isNextActive = this.#isNextActive();
             this.el.innerHTML = `
-            <button class="prev">Prev</button>
-            <button class="next">Next</button>
+            <button class="prev button ${isPrevActive ? "active" : "inactive"}">
+                <img src="/static/arrow-left.svg" alt="Arrow" />
+                <div>
+                    Prev
+                </div>
+            </button>
+            <button class="next button ${isNextActive ? "active" : "inactive"}">
+                <div>
+                    Next
+                </div>
+                <img src="/static/arrow-right.svg" alt="Arrow" />
+            </button>
         `;
             this.el.querySelector('button.prev')
                     .addEventListener('click', this.#prev.bind(this));
@@ -1231,7 +1262,7 @@
             loading: false,
             searchQuery: undefined,
             offset: 0,
-            test: 123
+            numToDisplay: 6,
         }
 
         constructor(appState) {
@@ -1255,6 +1286,9 @@
         
         async stateHook(path) {
             if (path === 'searchQuery' || path === 'offset') {
+                if (path === 'searchQuery') {
+                    this.state.offset = 0;
+                }
                 this.state.loading = true;
                 const data = await this.loadList(this.state.searchQuery, this.state.offset);
                 this.state.loading = false;
@@ -1270,17 +1304,12 @@
             return res.json();
         }
 
-        next() {
-            this.state.offset++;
-            console.log(this.state.offset);
-        }
-
         render() {
             const main = document.createElement('div');
             main.innerHTML = `
-        <h2>
+        <span>
             Found - ${this.state.numFound}
-        </h2>
+        </span>
         `;
             main.append(new Search(this.state).render());
             main.append(new CardList(this.appState, this.state).render());
@@ -1297,10 +1326,8 @@
         }
 
         renderFooter() {
-            if (this.state.numFound > 6) { 
-                const footer = new Footer(this.state).render();
-                this.app.append(footer);
-            }
+            const footer = new Footer(this.state).render();
+            this.app.append(footer);
         }
 
     }

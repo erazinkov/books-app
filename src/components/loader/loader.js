@@ -6,9 +6,9 @@ export class Loader extends DivComponent {
         super();
     }
     render() {
-        this.el.classList.add('lds-dual-ring');
+        this.el.classList.add('loader');
         this.el.innerHTML = `
-            <div></div>
+            <div class="loader__ring"></div>
         `;
         return this.el;
     }
