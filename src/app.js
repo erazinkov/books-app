@@ -1,3 +1,13 @@
 'use strict'
 
-import './app.css';
+class App {
+    routes = [
+        {
+            path: "",
+            view: null,
+        }
+    ];
+    constructor() {}
+}
+
+new App();
