@@ -20,17 +20,14 @@ export class MainView extends AbstractView {
     appStateHook (path) {
         if (path === 'favorites') {
             console.log('favorites');   
-            // this.render();
         }
     }
 
     render() {
         const main = document.createElement('div');
-        main.innerHTML = `Число книг: ${this.appState.favorites.length}`;
         this.app.innerHTML = '';
         this.app.append(main);
         this.renderHeader();
-        this.appState.favorites.push('d');
     }
 
     renderHeader() {
