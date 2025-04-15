@@ -26,7 +26,6 @@ export class MainView extends AbstractView {
     }
 
     stateHook (path) {
-        console.log(path);   
         if (path === 'searchQuery') {
             console.log('searchQuery');   
         }
@@ -34,7 +33,7 @@ export class MainView extends AbstractView {
 
     render() {
         const main = document.createElement('div');
-        main.append(new Search(this.appState).render());
+        main.append(new Search(this.state).render());
         this.app.innerHTML = '';
         this.app.append(main);
         this.renderHeader();
