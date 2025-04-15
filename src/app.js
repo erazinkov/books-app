@@ -17,6 +17,8 @@ class App {
     constructor() {
         window.addEventListener('hashchange', this.route.bind(this));
         this.route();
+
+
     }
 
     route() {
