@@ -13,11 +13,11 @@ export class Header extends DivComponent {
         this.el.classList.add('header');
         this.el.innerHTML = `
             <div>
-                <img src="/static/logo.svg"; alt="Логотип" />
+                <img src="/static/logo.svg" alt="Логотип" />
             </div>
             <div class="menu">
                 <a class="menu-item" href="#">
-                    <img src="/static/search.svg"; alt="Поиск книг" />
+                    <img src="/static/search.svg" alt="Поиск книг" />
                     Поиск книг
                 </a>    
                 <a class="menu-item" href="#">
