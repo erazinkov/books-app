@@ -15,13 +15,11 @@ export class CardList extends DivComponent {
             this.el.innerHTML = `<div class="card-list-loader">Загрузка...</div>`;
             return this.el;
         }
-        
-        this.el.innerHTML = `<h1>Найдено книг - ${this.parentState.numFound}</h1>`;
 
         const cardGrid = document.createElement('div');
         cardGrid.classList.add('card-grid');
         this.el.append(cardGrid);
-        
+
         for (const card of this.parentState.list) {
             cardGrid.append(new Card(this.appState, card).render());
         }
