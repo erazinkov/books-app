@@ -3,6 +3,7 @@ import onChange from 'on-change';
 import { Header } from '../../components/header/header.js';
 import { Search } from "../../components/search/search.js";
 import { CardList } from "../../components/card-list/card-list.js";
+import { Footer } from "../../components/footer/footer.js";
 
 export class MainView extends AbstractView {
     state = {
@@ -11,6 +12,7 @@ export class MainView extends AbstractView {
         loading: false,
         searchQuery: undefined,
         offset: 0,
+        numToDisplay: 6,
     };
 
     constructor(appState) {
@@ -59,6 +61,7 @@ export class MainView extends AbstractView {
         this.app.innerHTML = '';
         this.app.append(main);
         this.renderHeader();
+        this.renderFooter();
     }
 
     renderHeader() {
@@ -66,6 +69,10 @@ export class MainView extends AbstractView {
         this.app.prepend(header);
     }
 
+    renderFooter() {
+        const footer = new Footer(this.state).render();
+        this.app.append(footer);
+    }
     
 
 }

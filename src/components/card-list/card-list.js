@@ -20,7 +20,11 @@ export class CardList extends DivComponent {
         cardGrid.classList.add('card-grid');
         this.el.append(cardGrid);
 
+        let currentCardNumber = 0;
         for (const card of this.parentState.list) {
+            if (++currentCardNumber > this.parentState.numToDisplay) {
+                break;
+            }
             cardGrid.append(new Card(this.appState, card).render());
         }
 
