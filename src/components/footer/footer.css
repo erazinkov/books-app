@@ -1,3 +1,17 @@
 .footer {
     display: flex;
+    justify-content: space-between;
+}
+
+.footer-button {
+    padding: 5px;
+    display: flex;
+    background: none;
+    border: 1px solid var(--black);
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+.footer-button__inactive {
+    visibility: hidden;
 }
