@@ -18,6 +18,7 @@
     gap: 10px;
     font-size: 14px;
     line-height: 20px;
+    color: var(--black);
 }
 
 .menu-item:visited {
